@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -21,6 +22,11 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
+  {
+    rel: "icon",
+    href: "/logo.svg",
+    type: "image/svg+xml",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -31,6 +37,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        ></script>
       </head>
       <body>
         {children}
@@ -46,30 +56,60 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
+  let errorType: "NOT_FOUND" | "ERROR" = "NOT_FOUND";
+  let errorMsg = "Something somewhere somehow went very wrong.";
+  const isError = import.meta.env.DEV && error && error instanceof Error;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
+    if (error.status === 404) {
+      errorType = "NOT_FOUND";
+    } else {
+      errorType = "ERROR";
+      errorMsg = error.statusText || errorMsg;
+    }
+  } else if (isError) {
+    errorType = "ERROR";
+    errorMsg = error.message;
+    console.error(error.stack);
   }
 
+  const NotFound = () => {
+    return (
+      <>
+        <h1 className="text-content-tertiary text-9xl">
+          4<span className="text-content-secondary">0</span>4
+        </h1>
+        <p>
+          Sorry, page not found. Return to{" "}
+          {
+            <Link
+              to="/"
+              className="text-content-tertiary hover:text-content-secondary underline"
+            >
+              homepage
+            </Link>
+          }
+        </p>
+      </>
+    );
+  };
+
+  const AppError = () => {
+    return (
+      <>
+        <h1 className="text-content-tertiary text-9xl">
+          Err<span className="text-content-secondary">o</span>r
+        </h1>
+        <p className="">{errorMsg}</p>
+      </>
+    );
+  };
+
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
+    <main className="grid h-full w-full">
+      <section className="space-y-[24px] place-self-center text-center">
+        {errorType === "NOT_FOUND" ? <NotFound /> : <AppError />}
+      </section>
     </main>
   );
 }
