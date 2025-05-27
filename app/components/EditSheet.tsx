@@ -23,8 +23,9 @@ export default function EditSheet({ taskId }: EditSheetProps) {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const isCompletedRef = useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const deleteTask = async () => {
+  const handleDelete = async () => {
     if (!task) return;
 
     try {
@@ -55,6 +56,8 @@ export default function EditSheet({ taskId }: EditSheetProps) {
       if (error instanceof Error) {
         console.error(`Error updating task: ${error.message}`);
       } else console.error(error);
+    } finally {
+      closeButtonRef.current?.click();
     }
   };
 
@@ -63,12 +66,15 @@ export default function EditSheet({ taskId }: EditSheetProps) {
       <div className="flex justify-between">
         <SheetClose
           className="cursor-pointer transition-all duration-150 ease-in-out hover:scale-115"
-          onClick={deleteTask}
+          onClick={handleDelete}
         >
           <Trash2 size={18} className="stroke-accent-red" />
         </SheetClose>
 
-        <SheetClose className="cursor-pointer transition-all duration-150 ease-in-out hover:scale-115">
+        <SheetClose
+          ref={closeButtonRef}
+          className="cursor-pointer transition-all duration-150 ease-in-out hover:scale-115"
+        >
           <X size={18} className="stroke-content-primary" />
         </SheetClose>
       </div>
@@ -127,11 +133,9 @@ export default function EditSheet({ taskId }: EditSheetProps) {
           </label>
         </div>
 
-        <SheetClose className="mt-4 w-full">
-          <Button type="submit" className="w-full">
-            Save
-          </Button>
-        </SheetClose>
+        <Button type="submit" className="mt-4 w-full">
+          Save
+        </Button>
       </form>
 
       <SheetFooter className="text-center text-xs text-neutral-400">
