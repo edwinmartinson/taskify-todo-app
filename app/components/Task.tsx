@@ -1,10 +1,13 @@
 import { format } from "date-fns";
 import { Calendar, Trash2 } from "lucide-react";
+import { Sheet, SheetTrigger } from "./ui/sheet";
+
+import { cn } from "~/lib/utils";
 import { Checkbox } from "./ui/checkbox";
 import CircleButton from "./CircleButton";
 import type { Todo } from "~/app.types";
-import { cn } from "~/lib/utils";
 import db from "~/dexie/db";
+import EditSheet from "./EditSheet";
 
 type TaskProps = {
   task: Omit<Todo, "createdAt" | "updatedAt">;
@@ -34,8 +37,9 @@ export default function Task({ task }: TaskProps) {
         checked={task.isCompleted}
         onCheckedChange={handleCheck}
       />
-      <div className="w-full">
-        <button type="button">
+
+      <Sheet>
+        <SheetTrigger className="w-full cursor-pointer text-left">
           <p
             className={cn(
               task.isCompleted && "text-content-secondary line-through",
@@ -49,8 +53,10 @@ export default function Task({ task }: TaskProps) {
               {format(task.dueDate, "PPP")}
             </p>
           </div>
-        </button>
-      </div>
+        </SheetTrigger>
+        <EditSheet taskId={task.id} />
+      </Sheet>
+
       <CircleButton
         className="bg-accent-red/10 aspect-square size-9 border-0"
         onClick={handleDelete}

@@ -23,7 +23,7 @@ export default function AppContent() {
   return (
     <>
       <AppTab activeTab={activeTab} onTabChange={setActiveTab} />
-      <div className="w-full overflow-y-auto">
+      <div className="scrollbar w-full overflow-y-auto">
         {activeTab === "pending" && pendingTodos().length > 0 ? (
           pendingTodos().map((todo) => <Task key={todo.id} task={todo} />)
         ) : activeTab === "completed" && completedTodos().length > 0 ? (

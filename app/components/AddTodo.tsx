@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import CircleButton from "./CircleButton";
 import DatePicker from "./DatePicker";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import db from "~/dexie/db";
 
 export default function AddTodo() {
@@ -30,8 +30,15 @@ export default function AddTodo() {
     }
   };
 
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleAddTodo();
+  };
+
   return (
     <form
+      autoComplete="off"
+      onSubmit={onSubmit}
       name="taskbox"
       className="bg-surface-prompt border-surface-tertiary block h-fit rounded-3xl border p-4"
     >

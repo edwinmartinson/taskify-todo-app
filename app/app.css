@@ -156,8 +156,14 @@
   body {
     @apply bg-surface-primary text-content-primary h-full;
   }
+  ::placeholder {
+    @apply text-content-tertiary;
+  }
 }
 
-::placeholder {
-  @apply text-content-tertiary;
+@layer utilities {
+  .scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-content-primary) var(--color-surface-secondary);
+  }
 }
