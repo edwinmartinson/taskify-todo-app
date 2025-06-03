@@ -2,12 +2,14 @@ import { format } from "date-fns";
 import { Calendar, Trash2 } from "lucide-react";
 import { Sheet, SheetTrigger } from "./ui/sheet";
 
-import { cn } from "~/lib/utils";
+import { cn, logError } from "~/lib/utils";
 import { Checkbox } from "./ui/checkbox";
 import CircleButton from "./CircleButton";
 import type { Todo } from "~/app.types";
 import db from "~/dexie/db";
-import EditSheet from "./EditSheet";
+import EditSheet, { ReduxEditSheet } from "./EditSheet";
+import { useDispatch } from "react-redux";
+import { checkTodo, deleteTodo } from "~/state/redux/todoSlice";
 
 type TaskProps = {
   task: Omit<Todo, "createdAt" | "updatedAt">;
@@ -15,19 +17,22 @@ type TaskProps = {
 
 export default function Task({ task }: TaskProps) {
   const handleCheck = async () => {
-    await db.todos.update(task.id, {
-      isCompleted: !task.isCompleted,
-      updatedAt: new Date().toISOString(),
-    });
-
-    console.log(
-      `Task ${task.id} marked as ${!task.isCompleted ? "completed" : "pending"}`,
-    );
+    try {
+      await db.todos.update(task.id, {
+        isCompleted: !task.isCompleted,
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      logError(error);
+    }
   };
 
   const handleDelete = async () => {
-    await db.todos.delete(task.id);
-    console.log(`Task ${task.id} deleted`);
+    try {
+      await db.todos.delete(task.id);
+    } catch (error) {
+      logError(error);
+    }
   };
 
   return (
@@ -55,6 +60,62 @@ export default function Task({ task }: TaskProps) {
           </div>
         </SheetTrigger>
         <EditSheet taskId={task.id} />
+      </Sheet>
+
+      <CircleButton
+        className="bg-accent-red/10 aspect-square size-9 border-0"
+        onClick={handleDelete}
+      >
+        <Trash2 size={16} className="stroke-accent-red" />
+      </CircleButton>
+    </div>
+  );
+}
+
+export function ReduxTask({ task }: TaskProps) {
+  const dispatch = useDispatch();
+
+  const handleCheck = () => {
+    try {
+      dispatch(checkTodo(task.id));
+    } catch (error) {
+      logError(error);
+    }
+  };
+
+  const handleDelete = () => {
+    try {
+      dispatch(deleteTodo(task.id));
+    } catch (error) {
+      logError(error);
+    }
+  };
+
+  return (
+    <div className="bg-surface-prompt hover:border-surface-tertiary mb-3 flex items-center gap-4 rounded-[14px] border border-transparent px-4 py-3">
+      <Checkbox
+        className="border-content-primary size-4.5 cursor-pointer rounded-full"
+        checked={task.isCompleted}
+        onCheckedChange={handleCheck}
+      />
+
+      <Sheet>
+        <SheetTrigger className="w-full cursor-pointer text-left">
+          <p
+            className={cn(
+              task.isCompleted && "text-content-secondary line-through",
+            )}
+          >
+            {task.title}
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <Calendar size={14} className="stroke-accent-blue" />
+            <p className="text-content-secondary text-xs">
+              {format(task.dueDate, "PPP")}
+            </p>
+          </div>
+        </SheetTrigger>
+        <ReduxEditSheet taskId={task.id} />
       </Sheet>
 
       <CircleButton

@@ -159,6 +159,9 @@
   ::placeholder {
     @apply text-content-tertiary;
   }
+  a {
+    @apply underline;
+  }
 }
 
 @layer utilities {
