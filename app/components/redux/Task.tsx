@@ -1,33 +1,33 @@
 import { format } from "date-fns";
+import { useDispatch } from "react-redux";
 import { Calendar, Trash2 } from "lucide-react";
 
-import { Sheet, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetTrigger } from "../ui/sheet";
 import { cn, logError } from "~/lib/utils";
-import { Checkbox } from "./ui/checkbox";
-import CircleButton from "./CircleButton";
+import { Checkbox } from "../ui/checkbox";
+import CircleButton from "../CircleButton";
 import type { Todo } from "~/app.types";
-import db from "~/dexie/db";
 import EditSheet from "./EditSheet";
+import { checkTodo, deleteTodo } from "~/state/redux/todoSlice";
 
 type TaskProps = {
   task: Omit<Todo, "createdAt" | "updatedAt">;
 };
 
 export default function Task({ task }: TaskProps) {
-  const handleCheck = async () => {
+  const dispatch = useDispatch();
+
+  const handleCheck = () => {
     try {
-      await db.todos.update(task.id, {
-        isCompleted: !task.isCompleted,
-        updatedAt: new Date().toISOString(),
-      });
+      dispatch(checkTodo(task.id));
     } catch (error) {
       logError(error);
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     try {
-      await db.todos.delete(task.id);
+      dispatch(deleteTodo(task.id));
     } catch (error) {
       logError(error);
     }

@@ -1,9 +1,9 @@
 import type { Route } from "./+types/jotai.js";
 
-import { JotaiAddTodo } from "~/components/AddTodo";
-import { JotaiAppContent, ZustandAppContent } from "~/components/AppContent.js";
+import AddTodo from "~/components/jotai/AddTodo";
+import AppContent from "~/components/jotai/AppContent";
 import Navbar from "~/components/Navbar";
-import PoweredBy from "~/components/PoweredBy.js";
+import PoweredBy from "~/components/PoweredBy";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,8 +19,8 @@ export default function App({}: Route.MetaArgs) {
   return (
     <main className="mx-auto grid max-h-full w-full max-w-[608px] grid-rows-[40px_106px_36px_1fr_24px] gap-4 px-3 py-6 md:px-0">
       <Navbar />
-      <JotaiAddTodo />
-      <JotaiAppContent />
+      <AddTodo />
+      <AppContent />
       <PoweredBy varient="JOTAI" />
     </main>
   );

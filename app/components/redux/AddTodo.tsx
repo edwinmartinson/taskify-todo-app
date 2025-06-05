@@ -1,26 +1,27 @@
+import { useDispatch } from "react-redux";
 import { Plus } from "lucide-react";
-import CircleButton from "./CircleButton";
-import DatePicker from "./DatePicker";
 import { useState, type FormEvent } from "react";
-import db from "~/dexie/db";
+
 import { logError } from "~/lib/utils";
+import { addTodo } from "~/state/redux/todoSlice";
+import DatePicker from "../DatePicker";
+import CircleButton from "../CircleButton";
 
 export default function AddTodo() {
   const [task, setTask] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const dispatch = useDispatch();
 
   const handleAddTodo = async () => {
     if (task.trim() === "" || !date) return;
 
     try {
-      await db.todos.add({
-        title: task,
-        description: "",
-        dueDate: date.toISOString(),
-        isCompleted: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
+      dispatch(
+        addTodo({
+          title: task,
+          dueDate: date.toISOString(),
+        }),
+      );
     } catch (error) {
       logError(error);
     } finally {

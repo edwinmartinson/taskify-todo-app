@@ -1,24 +1,20 @@
 import { useState } from "react";
-import AppTab from "./AppTab";
+
+import AppTab from "../AppTab";
 import Task from "./Task";
-import { useLiveQuery } from "dexie-react-hooks";
-import db from "~/dexie/db";
-import NoTask from "./NoTask";
+import NoTask from "../NoTask";
+import { useTodos } from "~/state/zustand/store";
 
 type AppTabType = "pending" | "completed";
 
 export default function AppContent() {
   const [activeTab, setActiveTab] = useState<AppTabType>("pending");
-  const todos = useLiveQuery(() => {
-    return db.todos.toArray();
-  });
+  const todos = useTodos();
 
   const pendingTodos = () =>
-    todos?.filter((todo) => !todo.isCompleted).sort((a, b) => b.id! - a.id!) ||
-    [];
+    todos.filter((todo) => !todo.isCompleted).sort((a, b) => b.id! - a.id!);
   const completedTodos = () =>
-    todos?.filter((todo) => todo.isCompleted).sort((a, b) => b.id! - a.id!) ||
-    [];
+    todos.filter((todo) => todo.isCompleted).sort((a, b) => b.id! - a.id!);
 
   return (
     <>

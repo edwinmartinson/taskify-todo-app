@@ -1,52 +1,55 @@
+import { useRef, type FormEvent } from "react";
 import { Trash2, X } from "lucide-react";
+import { useAtom } from "jotai";
+
 import {
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetTitle,
   SheetClose,
-} from "./ui/sheet";
-import { useRef, type FormEvent } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
-
-import db from "~/dexie/db";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Switch } from "./ui/switch";
-import { Button } from "./ui/button";
+} from "../ui/sheet";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Switch } from "../ui/switch";
+import { Button } from "../ui/button";
 import { logError } from "~/lib/utils";
+import { deleteTodoAtom, todosAtom, updateTodoAtom } from "~/state/jotai/store";
 
 type EditSheetProps = {
   taskId: number;
 };
 
 export default function EditSheet({ taskId }: EditSheetProps) {
-  const task = useLiveQuery(() => db.todos.get(taskId), [taskId]);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const isCompletedRef = useRef<HTMLButtonElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const handleDelete = async () => {
+  const task = useAtom(todosAtom)[0].find((t) => t.id === taskId);
+  const remove = useAtom(deleteTodoAtom)[1];
+  const update = useAtom(updateTodoAtom)[1];
+
+  const handleDelete = () => {
     if (!task) return;
 
     try {
-      await db.todos.delete(task.id);
+      remove(task.id);
     } catch (error) {
       logError(error);
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!task || titleRef.current?.value === "") return;
 
     try {
-      await db.todos.update(task.id, {
+      update({
+        id: task.id,
         title: titleRef.current?.value || task.title,
         description: descriptionRef.current?.value || task.description,
         isCompleted: isCompletedRef.current?.dataset.state === "checked",
-        updatedAt: new Date().toISOString(),
       });
     } catch (error) {
       logError(error);

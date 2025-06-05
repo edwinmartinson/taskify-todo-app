@@ -1,7 +1,8 @@
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import type { NewTodoInput, Todo, UpdateTodoInput } from "~/app.types";
 
-export const todosAtom = atom<Todo[]>([]);
+export const todosAtom = atomWithStorage<Todo[]>("jotaiTodoDB", []);
 
 export const addTodoAtom = atom(null, (_, set, input: NewTodoInput) => {
   set(todosAtom, (state) => [

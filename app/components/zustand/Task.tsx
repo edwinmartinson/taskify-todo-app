@@ -1,33 +1,32 @@
 import { format } from "date-fns";
 import { Calendar, Trash2 } from "lucide-react";
 
-import { Sheet, SheetTrigger } from "./ui/sheet";
-import { cn, logError } from "~/lib/utils";
-import { Checkbox } from "./ui/checkbox";
-import CircleButton from "./CircleButton";
 import type { Todo } from "~/app.types";
-import db from "~/dexie/db";
+import { Sheet, SheetTrigger } from "../ui/sheet";
+import { cn, logError } from "~/lib/utils";
+import { Checkbox } from "../ui/checkbox";
+import CircleButton from "../CircleButton";
 import EditSheet from "./EditSheet";
+import { useTodoActions } from "~/state/zustand/store";
 
 type TaskProps = {
   task: Omit<Todo, "createdAt" | "updatedAt">;
 };
 
 export default function Task({ task }: TaskProps) {
-  const handleCheck = async () => {
+  const { check, delete: remove } = useTodoActions();
+
+  const handleCheck = () => {
     try {
-      await db.todos.update(task.id, {
-        isCompleted: !task.isCompleted,
-        updatedAt: new Date().toISOString(),
-      });
+      check(task.id);
     } catch (error) {
       logError(error);
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     try {
-      await db.todos.delete(task.id);
+      remove(task.id);
     } catch (error) {
       logError(error);
     }

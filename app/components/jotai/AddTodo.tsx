@@ -1,25 +1,23 @@
 import { Plus } from "lucide-react";
-import CircleButton from "./CircleButton";
-import DatePicker from "./DatePicker";
+import DatePicker from "../DatePicker";
+import CircleButton from "../CircleButton";
 import { useState, type FormEvent } from "react";
-import db from "~/dexie/db";
 import { logError } from "~/lib/utils";
+import { addTodoAtom } from "~/state/jotai/store";
+import { useAtom } from "jotai";
 
 export default function AddTodo() {
   const [task, setTask] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const addTodo = useAtom(addTodoAtom)[1];
 
   const handleAddTodo = async () => {
     if (task.trim() === "" || !date) return;
 
     try {
-      await db.todos.add({
+      addTodo({
         title: task,
-        description: "",
         dueDate: date.toISOString(),
-        isCompleted: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       });
     } catch (error) {
       logError(error);
