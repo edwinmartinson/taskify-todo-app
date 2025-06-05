@@ -20,3 +20,10 @@ export type Config = {
 
 export type ConfigsTable = EntityTable<Config, "id">;
 export type TodosTable = EntityTable<Todo, "id">;
+
+export type NewTodoInput = Pick<Todo, "title" | "dueDate">;
+
+export type UpdateTodoInput = Pick<
+  Todo,
+  "id" | "title" | "description" | "isCompleted"
+>;

@@ -20,7 +20,7 @@ export default function PoweredBy({ varient }: PoweredByProps) {
       case "JOTAI":
         return (
           <p>
-            Powered by <a href="https://jotai.org/">Jodi</a>
+            Powered by <a href="https://jotai.org/">Jotai</a>
           </p>
         );
       case "XSTATE":
