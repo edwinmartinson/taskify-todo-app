@@ -9,6 +9,11 @@ Your advanced todo app for efficient task management. Built with React, React Ro
 - 🌓 Light and dark mode support
 - 💾 Offline support with local storage (DexieJS)
 - 🖱️ Intuitive and responsive UI with Shadcn components
+- 🧩 **Compare State Management:**
+  - The app demonstrates different state management solutions on different routes:
+    - **Redux**
+    - **Zustand**
+    - **Jotai**
 
 ![Taskify App](public/app.png)
 
