@@ -159,14 +159,15 @@
   ::placeholder {
     @apply text-content-tertiary;
   }
-  a {
-    @apply underline;
-  }
 }
 
 @layer utilities {
   .scrollbar {
     scrollbar-width: thin;
     scrollbar-color: var(--color-content-primary) var(--color-surface-secondary);
+  }
+
+  .link-line a {
+    @apply underline;
   }
 }

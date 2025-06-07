@@ -41,7 +41,7 @@ export default function PoweredBy({ varient }: PoweredByProps) {
   };
 
   return (
-    <div className="text-content-tertiary flex w-full justify-center text-sm">
+    <div className="text-content-tertiary link-line flex w-full justify-center text-sm">
       {stateManger(varient)}
     </div>
   );
